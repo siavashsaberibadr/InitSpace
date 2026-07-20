@@ -1,6 +1,3 @@
 fastapi
-uvicorn[standard]
-sqlalchemy
-pymysql
-alembic
-pydantic-settings
+uvicorn
+jinja2

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-glow"></div>
+    <div class="container">
+        <div class="hero-content">
+            <span class="hero-badge">
+                🚀 Enterprise Infrastructure Knowledge
+            </span>
+            <h1>SysForge</h1>
+            <h2>Linux • Zabbix • Infrastructure • Automation</h2>
+            <p class="hero-description">
+                Learn enterprise infrastructure through practical tutorials, real-world projects, technical documentation, and automation guides.
+            </p>
+            <div class="hero-buttons">
+                <a href="#tutorials" class="btn">📚 Start Learning</a>
+                <a href="#projects" class="btn btn-outline">🚀 Explore Projects</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container grid-3">
+        <div class="card feature-card">
+            <div class="card-icon">🐧</div>
+            <h3>Enterprise Linux</h3>
+            <p>Production-grade administration, performance tuning, and security hardening tutorials.</p>
+        </div>
+        <div class="card feature-card">
+            <div class="card-icon">⚡</div>
+            <h3>Zabbix & Monitoring</h3>
+            <p>Comprehensive guides on metrics collection, custom templates, and alert routing.</p>
+        </div>
+        <div class="card feature-card">
+            <div class="card-icon">🤖</div>
+            <h3>Ansible & Automation</h3>
+            <p>Automate your infrastructure deployment with tested playbooks and CI/CD pipelines.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Placeholder Section: Tutorials -->
+<section id="tutorials" class="section-padding">
+    <div class="container">
+        <div class="section-header">
+            <h2>Latest Tutorials</h2>
+            <p>Explore recent guides and technical documentation.</p>
+        </div>
+        <div class="grid-3">
+            <div class="card tutorial-card">
+                <span class="tag">Linux</span>
+                <h3>Coming Soon...</h3>
+                <p>New enterprise tutorials are being prepared.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Placeholder Section: Projects -->
+<section id="projects" class="section-padding">
+    <div class="container">
+        <div class="section-header">
+            <h2>Featured Projects</h2>
+            <p>Real-world infrastructure topologies and automation code.</p>
+        </div>
+        <div class="grid-3">
+            <div class="card project-card">
+                <span class="tag">Automation</span>
+                <h3>Coming Soon...</h3>
+                <p>Open-source infrastructure projects will be added here.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="about"></section>
+
+{% endblock %}
