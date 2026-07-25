@@ -2,47 +2,95 @@
 
 {% block content %}
 
-<!-- Hero Section -->
+
+
+<!-- Hero Section Modernized -->
 <section class="hero">
-    <div class="hero-glow"></div>
-    <div class="container">
+    <!-- پس‌زمینه گرید و نور نئون -->
+    <div class="hero-bg-grid"></div>
+    <div class="hero-glow primary-glow"></div>
+    <div class="hero-glow secondary-glow"></div>
+
+    <div class="container relative-z">
+        <!-- آیکون‌های شناور تکنولوژی در اطراف -->
+        <div class="floating-tech tech-left-1">🐧 Linux</div>
+        <div class="floating-tech tech-left-2">📊 Zabbix</div>
+        <div class="floating-tech tech-right-1">⚡ Grafana</div>
+        <div class="floating-tech tech-right-2">🤖 Ansible</div>
+
         <div class="hero-content">
             <span class="hero-badge">
-                🚀 Enterprise Infrastructure Knowledge
+                <span class="badge-dot"></span> Enterprise Infrastructure Knowledge
             </span>
-            <h1>InitSpace</h1>
-            <h2>Linux • Zabbix • Infrastructure • Automation</h2>
+            
+            <h1 class="hero-title">InitSpace</h1>
+            
+            <div class="hero-subtitle">
+                <span>Linux</span> • <span>Zabbix</span> • <span>Infrastructure</span> • <span>Automation</span>
+            </div>
+            
             <p class="hero-description">
-                Learn enterprise infrastructure through practical tutorials, real-world projects, technical documentation, and automation guides.
+                Learn enterprise infrastructure through practical tutorials, real-world projects, technical documentation.
             </p>
+            
             <div class="hero-buttons">
-                <a href="#tutorials" class="btn">📚 Start Learning</a>
+                <a href="#tutorials" class="btn btn-primary">📚 Start Learning</a>
                 <a href="#projects" class="btn btn-outline">🚀 Explore Projects</a>
+            </div>
+
+            <!-- بخش آمار و لایو استت‌ها برای پر کردن فضای خالی -->
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-num">100%</span>
+                    <span class="stat-label">Hands-on Guides</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-num">Enterprise</span>
+                    <span class="stat-label">Architectures</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-num">Automation</span>
+                    <span class="stat-label">Playbooks</span>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Features Section -->
-<section class="features">
-    <div class="container grid-3">
-        <div class="card feature-card">
-            <div class="card-icon">🔎</div>
-            <h3>Zabbix</h3>
-            <p>Detailed articles and video guides on enterprise monitoring, agent deployment, and custom trigger alerts..</p>
+
+
+<!-- Featured Projects Section -->
+<section id="projects" class="section-padding">
+    <div class="container">
+        <div class="section-header">
+            <h2>Featured Projects</h2>
+            <p>Real-world infrastructure topologies, automation code, and open-source tools.</p>
         </div>
-        <div class="card feature-card">
-            <div class="card-icon">⚡</div>
-            <h3>Grafana</h3>
-            <p>Hands-on tutorials and video walkthroughs on creating dynamic dashboards, data sources, and metrics visualization..</p>
-        </div>
-        <div class="card feature-card">
-            <div class="card-icon">🤖</div>
-            <h3>Ansible & Automation</h3>
-            <p>Step-by-step posts and YouTube labs for automating infrastructure, configuration management, and tested playbooks.</p>
+        
+        <div class="grid-3">
+            <!-- Project Card: FastAPI Monitoring Platform -->
+            <div class="card project-card highlight-project">
+                <div class="card-status-badge">🚀 In Active Development</div>
+                <span class="tag">Python • FastAPI • Observability</span>
+                <h3>Open-Source FastAPI Monitoring Platform</h3>
+                <p>
+                    Designing and building a high-performance, open-source infrastructure monitoring solution powered by FastAPI, Python, and async architecture. Built to deliver real-time metrics, lightweight agent communication, and seamless custom dashboards for enterprise environments.
+                </p>
+                <div class="project-tech-stack">
+                    <span>FastAPI</span>
+                    <span>Python 3.12</span>
+                    <span>WebSockets</span>
+                    <span>AsyncIO</span>
+                    <span>Prometheus/Metrics</span>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
+
 
 <!-- Placeholder Section: Tutorials -->
 <section id="tutorials" class="section-padding">
@@ -78,6 +126,63 @@
     </div>
 </section>
 
-<section id="about"></section>
+
+
+<!-- About Section -->
+<section id="about" class="about-section section-padding">
+    <div class="container">
+        <div class="about-card">
+            <div class="about-header">
+                <div class="avatar-box">
+                    <span class="avatar-icon">👨‍💻</span>
+                </div>
+                <div class="about-title-group">
+                    <h2>Siavash Saberi Badr</h2>
+                    <p class="role-title">Senior Linux System Engineer</p>
+                </div>
+            </div>
+
+            <div class="about-body">
+                <p>
+                    Senior Linux/System Engineer with <strong>12+ years of enterprise experience</strong> across telecom giants and managed services . Specializing in <strong>Linux Administration</strong>, <strong>Observability & Monitoring Ecosystems</strong> (Zabbix, Prometheus, Grafana, ELK), and <strong>Infrastructure Automation</strong> (Ansible, Bash, Python).
+                </p>
+
+                <!-- Key Achievements / Highlights -->
+                <div class="about-highlights">
+                    <div class="highlight-item">
+                        <span class="hl-num">12+</span>
+                        <span class="hl-text">Years Experience</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="hl-num">MSc</span>
+                        <span class="hl-text">Software Engineering</span>
+                    </div>
+                </div>
+
+                <!-- Skill Tags -->
+                <div class="about-skills">
+                    <div class="skill-tag">🐧 Linux (RedHat/Debian)</div>
+                    <div class="skill-tag">📊 Zabbix & Prometheus</div>
+                    <div class="skill-tag">⚡ Grafana Dashboards</div>
+                    <div class="skill-tag">🤖 Ansible & Automation</div>
+                    <div class="skill-tag">🔍 ELK Stack</div>
+                    <div class="skill-tag">🗄️ DB Clustering (Galera/MySQL)</div>
+                    <div class="skill-tag">🐍 Python & Bash Scripting</div>
+                </div>
+
+                <!-- Certifications Badge Row -->
+                <div class="about-certs">
+                    <span class="certs-title">Certifications:</span>
+                    <span class="cert-badge">CKA (Kubernetes)</span>
+                    <span class="cert-badge">Docker Certified</span>
+                    <span class="cert-badge">LPIC-1</span>
+		    <span class="cert-badge">LPIC-2</span>
+                    <span class="cert-badge">CCNA</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 
 {% endblock %}

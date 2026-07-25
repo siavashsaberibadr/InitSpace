@@ -5,7 +5,8 @@ services:
   website:
     build: .
     container_name: my-website
+    restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "80:80"
     volumes:
       - .:/app
