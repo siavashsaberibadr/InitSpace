@@ -2,84 +2,45 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>InitSpace | Linux • Zabbix • Infrastructure</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', path='css/style.css') }}">
-
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
 </head>
 
 <body>
 
 <header>
-
     <nav class="navbar">
-
         <div class="logo">
-
             <div class="logo-box">IS</div>
-
             <span>InitSpace</span>
-
         </div>
-
         <ul class="nav-links">
-
             <li><a href="/">Home</a></li>
-
             <li><a href="#tutorials">Tutorials</a></li>
-
             <li><a href="#projects">Projects</a></li>
-
             <li><a href="#about">About</a></li>
-
             <li><a href="#contact">Contact</a></li>
-
         </ul>
-
     </nav>
-
 </header>
 
 <main>
-`
 {% block content %}
 
 {% endblock %}
-
 </main>
 
 <footer id="contact">
-
     <div class="container">
-
         <h3>InitSpace</h3>
-
-        <p>
-
-            Linux • Zabbix • Infrastructure • Automation
-
-        </p>
-
-        <p>
-
-            © 2026 InitSpace. All Rights Reserved.
-
-        </p>
-
+        <p>Linux • Zabbix • Infrastructure • Automation</p>
+        <p>© 2026 InitSpace. All Rights Reserved.</p>
     </div>
-
 </footer>
 
 <script src="{{ url_for('static', path='js/app.js') }}"></script>

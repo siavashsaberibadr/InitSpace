@@ -6,7 +6,19 @@ services:
     build: .
     container_name: my-website
     restart: unless-stopped
+    env_file:
+      - .env
+    expose:
+      - "8000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: my-nginx
+    restart: unless-stopped
     ports:
       - "80:80"
     volumes:
-      - .:/app
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./static:/app/static:ro
+    depends_on:
+      - website

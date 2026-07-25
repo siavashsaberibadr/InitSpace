@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- با اضافه کردن margin-top از هدر فاصله می‌گیرد و با max-width پهن‌تر می‌شود -->
+<section class="section-padding" style="margin-top: 60px;">
+    <div class="container" style="max-width: 1200px;"> 
+        <article class="card" style="padding: 40px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;">
+            <div style="margin-bottom: 20px;">
+                <span class="tag">{{ tag }}</span>
+                <span style="color: #888; font-size: 14px; margin-left: 10px;">📅 {{ date }}</span>
+            </div>
+            
+            <h1 style="font-size: 2.5rem; margin-bottom: 20px; color: #fff;">{{ title }}</h1>
+            <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 30px;">
+            
+            <div class="tutorial-content" style="line-height: 1.8; color: #ccc;">
+                {{ content | safe }}
+            </div>
+
+            <div style="margin-top: 40px;">
+                <a href="/" class="btn btn-outline">← Back to Home</a>
+            </div>
+        </article>
+    </div>
+</section>
+{% endblock %}
