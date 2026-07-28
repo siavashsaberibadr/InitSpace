@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-glow primary-glow"></div>
+    <div class="hero-glow secondary-glow"></div>
+
+    <div class="container relative-z">
+        <div class="floating-tech tech-left-1">🐧 Linux</div>
+        <div class="floating-tech tech-left-2">📊 Zabbix</div>
+        <div class="floating-tech tech-right-1">⚡ Grafana</div>
+        <div class="floating-tech tech-right-2">🤖 Ansible</div>
+
+        <div class="hero-content">
+            <span class="hero-badge">
+                <span class="badge-dot"></span> Enterprise Infrastructure Knowledge
+            </span>
+            
+            <h1 class="hero-title">InitSpace</h1>
+            
+            <div class="hero-subtitle">
+                <span>Enterprise Zabbix Mastery</span> • <span>Python Monitoring Architecture</span>
+            </div>
+            
+            <p class="hero-description">
+                Master enterprise infrastructure monitoring with Zabbix, and build your own custom lightweight monitoring agents and platforms using Python, FastAPI, and async architecture.
+            </p>
+            
+            <div class="hero-buttons">
+                <a href="#tutorials" class="btn btn-primary">📚 Start Learning</a>
+                <a href="#projects" class="btn btn-outline">🚀 Explore Projects</a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-num">100%</span>
+                    <span class="stat-label">Practical Guides</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-num">Enterprise</span>
+                    <span class="stat-label">Topologies</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-num">Automation</span>
+                    <span class="stat-label">Playbooks</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+<!-- Latest Tutorials Section -->
+
+<section id="tutorials" class="section-padding">
+    <div class="container">
+        <div class="section-header">
+            <h2>Latest Tutorials</h2>
+            <p>Explore recent guides and technical documentation.</p>
+        </div>
+        <div class="grid-3">
+            {% if tutorials %}
+                {% for item in tutorials %}
+                <div class="card tutorial-card">
+                    <span class="tag">{{ item.tag }}</span>
+                    <h3>{{ item.title }}</h3>
+                    <p>{{ item.summary }}</p>
+                    <div>
+                        <a href="/tutorials/{{ item.slug }}" class="btn btn-outline" style="margin-top: 15px; padding: 8px 18px; font-size: 13px;">Read Article →</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No tutorials available right now.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Featured Projects Section -->
+<section id="projects" class="section-padding">
+    <div class="container">
+        <div class="section-header">
+            <h2>Featured Projects</h2>
+            <p>Real-world infrastructure topologies, automation code, and open-source tools.</p>
+        </div>
+        
+        <div class="grid-3">
+            <div class="card project-card highlight-project">
+                <div class="card-status-badge">🚀 In Active Development</div>
+                <span class="tag">Python • FastAPI • Zabbix-Inspired</span>
+                <h3>Custom Python Monitoring Platform & Agent</h3>
+                <p>
+                    Building an open-source, Zabbix-inspired monitoring system from scratch using Python 3.12, FastAPI, and WebSockets. Features lightweight agent communication, real-time metric collection, dynamic alerting triggers, and interactive dashboards.
+                </p>
+                <div class="project-tech-stack">
+                    <span>FastAPI</span>
+                    <span>Python Agent</span>
+                    <span>WebSockets</span>
+                    <span>AsyncIO</span>
+                    <span>Zabbix Protocol / Metrics</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="about-section section-padding">
+    <div class="container">
+        <div class="about-card">
+            <div class="about-header">
+                <div class="avatar-box">
+                    <span class="avatar-icon">👨‍💻</span>
+                </div>
+                <div class="about-title-group">
+                    <h2>Siavash Saberi Badr</h2>
+                    <p class="role-title">Senior Linux System & SysOps Engineer</p>
+                </div>
+            </div>
+
+            <div class="about-body">
+                <p>
+                    Senior Linux & SysOps Engineer with <strong>12+ years of hands-on experience</strong> in telecom and high-availability environments. Specialized in enterprise Linux administration, server health & capacity monitoring (Zabbix, Grafana, ELK), database cluster operations, and operational automation using Ansible, Bash, and Python to ensure 99.99% service availability.
+                </p>
+
+                <div class="about-highlights">
+                    <div class="highlight-item">
+                        <span class="hl-num">12+</span>
+                        <span class="hl-text">Years Experience</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="hl-num">99.99%</span>
+                        <span class="hl-text">Service Availability</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="hl-num">MSc</span>
+                        <span class="hl-text">Software Engineering</span>
+                    </div>
+                </div>
+
+                <div class="about-skills">
+                    <div class="skill-tag">🐧 Linux Systems & Server Admin</div>
+                    <div class="skill-tag">📊 Zabbix & Infrastructure Observability</div>
+                    <div class="skill-tag">⚡ Grafana Metrics & Dashboards</div>
+                    <div class="skill-tag">🤖 Ansible Configuration Management</div>
+                    <div class="skill-tag">🗄️ Database Operations & Clustering (Galera/MySQL)</div>
+                    <div class="skill-tag">🔍 ELK Log Management</div>
+                    <div class="skill-tag">⚙️ System Capacity & Performance Tuning</div>
+                    <div class="skill-tag">🐍 Python & Bash Operations</div>
+                </div>
+
+                <div class="about-certs">
+                    <span class="certs-title">Certifications:</span>
+                    <span class="cert-badge">CKA (Kubernetes)</span>
+                    <span class="cert-badge">Docker Certified</span>
+                    <span class="cert-badge">LPIC-1</span>
+                    <span class="cert-badge">CCNA</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

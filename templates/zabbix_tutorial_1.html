@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block title %}How to Install Zabbix 7.0 LTS with PostgreSQL 14 & pg_partman{% endblock %}
+
+{% block content %}
+<style>
+    .tutorial-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        color: #e2e8f0;
+        line-height: 1.7;
+    }
+    .tutorial-header {
+        border-bottom: 1px solid #334155;
+        padding-bottom: 25px;
+        margin-bottom: 35px;
+    }
+    .tutorial-badge {
+        background-color: #2563eb;
+        color: #fff;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+    .tutorial-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 15px;
+        line-height: 1.3;
+    }
+    .tutorial-subtitle {
+        font-size: 1.1rem;
+        color: #94a3b8;
+    }
+    .tutorial-section-title {
+        color: #38bdf8;
+        font-size: 1.6rem;
+        margin-top: 45px;
+        margin-bottom: 20px;
+        border-bottom: 1px dashed #334155;
+        padding-bottom: 8px;
+    }
+    .tutorial-subtitle-2 {
+        color: #f1f5f9;
+        font-size: 1.25rem;
+        margin-top: 25px;
+        margin-bottom: 12px;
+    }
+    .tutorial-container ul, .tutorial-container ol {
+        margin-left: 20px;
+        margin-bottom: 20px;
+    }
+    .tutorial-container li {
+        margin-bottom: 8px;
+    }
+    pre {
+        background-color: #0f172a !important;
+        border: 1px solid #1e293b;
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 20px 0;
+    }
+    code {
+        font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+        color: #38bdf8;
+        font-size: 0.95rem;
+    }
+    pre code {
+        color: #f8fafc;
+    }
+    .custom-card {
+        background-color: #1e293b;
+        border-left: 4px solid #10b981;
+        padding: 20px;
+        border-radius: 6px;
+        margin: 25px 0;
+    }
+    .custom-alert-info {
+        background-color: #1e293b;
+        border-left: 4px solid #38bdf8;
+        padding: 15px 20px;
+        border-radius: 6px;
+        margin: 20px 0;
+    }
+    .custom-alert-danger {
+        background-color: #1e293b;
+        border-left: 4px solid #ef4444;
+        padding: 20px;
+        border-radius: 6px;
+        margin: 25px 0;
+    }
+</style>
+
+<div class="tutorial-container">
+    <!-- Header Section -->
+    <header class="tutorial-header">
+        <span class="tutorial-badge">Zabbix & PostgreSQL</span>
+        <h1 class="tutorial-title">How to Install Zabbix 7.0 LTS with PostgreSQL 14 & Automatic Partitioning via pg_partman</h1>
+        <p class="tutorial-subtitle">A production-grade guide to deploying enterprise monitoring with native database partitioning for zero-IO cleanup overhead.</p>
+    </header>
+
+    <!-- Content Section -->
+    <article class="article-content">
+        <!-- Architectural Justification -->
+        <section>
+            <h2 class="tutorial-section-title">Architectural Justification</h2>
+            
+            <h3 class="tutorial-subtitle-2">1. Why Choose PostgreSQL over MySQL for Production?</h3>
+            <p>In large-scale enterprise monitoring environments, the database faces a massive volume of continuous write transactions (High-Write Throughput). PostgreSQL is selected for the following technical reasons:</p>
+            <ul>
+                <li><strong>Superior Concurrency Management (MVCC):</strong> PostgreSQL’s Multiversion Concurrency Control prevents table locking during concurrent read/write operations, delivering significantly better performance under heavy Zabbix dashboard queries and API requests.</li>
+                <li><strong>Native Partitioning Efficiency:</strong> Starting with PostgreSQL 10 and heavily optimized in version 14+, Native Partitioning minimizes system overhead compared to other storage engines.</li>
+                <li><strong>Data Integrity and Crash Recovery:</strong> PostgreSQL’s Write-Ahead Logging (WAL) and crash recovery mechanisms provide superior stability and reliability for critical monitoring infrastructure.</li>
+            </ul>
+
+            <h3 class="tutorial-subtitle-2">2. Why Use pg_partman Instead of Zabbix Internal Housekeeper?</h3>
+            <p>By default, the Zabbix internal Housekeeper process purges old data using standard <code>DELETE FROM history WHERE ...</code> queries. In a production environment, this approach creates two major performance bottlenecks:</p>
+            <ul>
+                <li><strong>Database Locking and IO Spikes:</strong> Running millions of row-by-row <code>DELETE</code> queries leads to severe CPU and IO saturation, often causing Zabbix Server to drop incoming metrics.</li>
+                <li><strong>Database Bloat (Unreleased Disk Space):</strong> Standard <code>DELETE</code> operations only mark space as reusable without returning it to the operating system. The only way to reclaim disk space is by running a manual <code>VACUUM FULL</code>, which completely locks the table during execution.</li>
+            </ul>
+
+            <div class="custom-card">
+                <h4 style="color: #10b981; margin-top: 0;">The Solution with pg_partman:</h4>
+                <p style="margin-bottom: 0;">By implementing daily range partitioning, historical data retention is handled via <code>DROP TABLE</code> operations on expired child partitions. Executing a <code>DROP TABLE</code> takes only a few milliseconds, places zero load on database CPU/IO, and instantly returns 100% of the freed disk space to the operating system.</p>
+            </div>
+        </section>
+
+        <!-- Runbook Section -->
+        <section>
+            <h2 class="tutorial-section-title">Complete Installation & Configuration Runbook</h2>
+
+            <h3 class="tutorial-subtitle-2">Step 1: System Update & Dependencies</h3>
+            <p>Update system repositories and install essential toolkits, including the required PHP PostgreSQL driver:</p>
+            <pre><code>apt update && apt upgrade -y
+apt install -y curl ca-certificates lsb-release gnupg wget php-pgsql php8.1-pgsql</code></pre>
+
+            <h3 class="tutorial-subtitle-2">Step 2: Add Zabbix 7.0 Repository</h3>
+            <p>Download and install the official Zabbix 7.0 LTS repository package for Ubuntu 22.04:</p>
+            <pre><code>wget https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.0+ubuntu22.04_all.deb
+dpkg -i zabbix-release_latest_7.0+ubuntu22.04_all.deb
+apt update</code></pre>
+
+            <h3 class="tutorial-subtitle-2">Step 3: Install Zabbix, PostgreSQL, and pg_partman</h3>
+            <p>Install PostgreSQL 14, the pg_partman extension, Zabbix Server, Frontend, Agent, and Nginx components:</p>
+            <pre><code>apt install -y postgresql-14 postgresql-14-partman zabbix-server-pgsql zabbix-frontend-php zabbix-nginx-conf zabbix-sql-scripts zabbix-agent</code></pre>
+
+            <h3 class="tutorial-subtitle-2">Step 4: Database & Extension Provisioning</h3>
+            <p>Initialize the database, create the zabbix database user, and enable the pg_partman extension under a dedicated schema.</p>
+            <pre><code>sudo -u postgres psql</code></pre>
+            <p>Execute the following SQL queries:</p>
+            <pre><code>-- Create database user and schema
+CREATE USER zabbix WITH PASSWORD 'Your_Strong_Password';
+CREATE DATABASE zabbix OWNER zabbix;
+
+\c zabbix
+
+-- Initialize pg_partman schema and extension
+CREATE SCHEMA IF NOT EXISTS partman AUTHORIZATION zabbix;
+CREATE EXTENSION IF NOT EXISTS pg_partman SCHEMA partman;
+
+-- Grant schema-level privileges
+GRANT ALL ON SCHEMA partman TO zabbix;
+GRANT ALL ON ALL TABLES IN SCHEMA partman TO zabbix;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA partman TO zabbix;
+GRANT ALL ON ALL PROCEDURES IN SCHEMA partman TO zabbix;
+
+\q</code></pre>
+
+            <h3 class="tutorial-subtitle-2">Step 5: Import Base Zabbix Schema</h3>
+            <p>Import initial tables and data provided by the Zabbix installer:</p>
+            <pre><code>zcat /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz | sudo -u zabbix psql zabbix</code></pre>
+
+            <h3 class="tutorial-subtitle-2">Step 6: Configure Native Table Partitioning</h3>
+            <p>Convert standard Zabbix history* and trends* tables into PostgreSQL Native Range Partitioned tables.</p>
+            <div class="custom-alert-info">
+                <strong>Note:</strong> Zabbix stores clock times as Unix Timestamps (integers). Therefore, partition intervals must be defined in seconds (86400 = 1 day, 2592000 = 30 days).
+            </div>
+            <pre><code>sudo -u postgres psql -d zabbix</code></pre>
+            <p>Execute the following DDL and pg_partman procedures:</p>
+            <pre><code>-- 1. Drop default non-partitioned tables
+DROP TABLE IF EXISTS history, history_uint, history_str, history_text, history_log CASCADE;
+DROP TABLE IF EXISTS trends, trends_uint CASCADE;
+
+-- 2. Re-create tables with PARTITION BY RANGE (clock)
+CREATE TABLE history (
+    itemid bigint NOT NULL,
+    clock integer DEFAULT 0 NOT NULL,
+    value numeric(16,4) DEFAULT '0.0000' NOT NULL,
+    ns integer DEFAULT 0 NOT NULL
+) PARTITION BY RANGE (clock);
+
+CREATE TABLE history_uint (
+    itemid bigint NOT NULL,
+    clock integer DEFAULT 0 NOT NULL,
+    value numeric(20,0) DEFAULT '0' NOT NULL,
+    ns integer DEFAULT 0 NOT NULL
+) PARTITION BY RANGE (clock);
+
+CREATE TABLE history_str (
+    itemid bigint NOT NULL,
+    clock integer DEFAULT 0 NOT NULL,
+    value character varying(255) DEFAULT ''::character varying NOT NULL,
+    ns integer DEFAULT 0 NOT NULL
+) PARTITION BY RANGE (clock);
+
+CREATE TABLE history_text (
+    itemid bigint NOT NULL,
+    clock integer DEFAULT 0 NOT NULL,
+    value text DEFAULT ''::text NOT NULL,
+    ns integer DEFAULT 0 NOT NULL
+) PARTITION BY RANGE (clock);
+
+CREATE TABLE history_log (
+    itemid bigint NOT NULL,
+    clock integer DEFAULT 0 NOT NULL,
+    timestamp integer DEFAULT 0 NOT NULL,
+    source character varying(64) DEFAULT ''::character varying NOT NULL,
+    severity integer DEFAULT 0 NOT NULL,
+    value text DEFAULT ''::text NOT NULL,
+    logeventid integer DEFAULT 0 NOT NULL,
+    ns integer DEFAULT 0 NOT NULL
+) PARTITION BY RANGE (clock);
+
+CREATE TABLE trends (
+    itemid bigint NOT NULL,
+    clock integer DEFAULT 0 NOT NULL,
+    num integer DEFAULT 0 NOT NULL,
+    value_min numeric(16,4) DEFAULT '0.0000' NOT NULL,
+    value_avg numeric(16,4) DEFAULT '0.0000' NOT NULL,
+    value_max numeric(16,4) DEFAULT '0.0000' NOT NULL,
+    PRIMARY KEY (itemid, clock)
+) PARTITION BY RANGE (clock);
+
+CREATE TABLE trends_uint (
+    itemid bigint NOT NULL,
+    clock integer DEFAULT 0 NOT NULL,
+    num integer DEFAULT 0 NOT NULL,
+    value_min numeric(20,0) DEFAULT '0' NOT NULL,
+    value_avg numeric(20,0) DEFAULT '0' NOT NULL,
+    value_max numeric(20,0) DEFAULT '0' NOT NULL,
+    PRIMARY KEY (itemid, clock)
+) PARTITION BY RANGE (clock);
+
+-- 3. Create parent partitions via pg_partman
+SELECT partman.create_parent('public.history', 'clock', 'native', '86400', p_premake => 7);
+SELECT partman.create_parent('public.history_uint', 'clock', 'native', '86400', p_premake => 7);
+SELECT partman.create_parent('public.history_str', 'clock', 'native', '86400', p_premake => 7);
+SELECT partman.create_parent('public.history_text', 'clock', 'native', '86400', p_premake => 7);
+SELECT partman.create_parent('public.history_log', 'clock', 'native', '86400', p_premake => 7);
+
+SELECT partman.create_parent('public.trends', 'clock', 'native', '2592000', p_premake => 3);
+SELECT partman.create_parent('public.trends_uint', 'clock', 'native', '2592000', p_premake => 3);
+
+-- 4. Set Retention Policy (pg_partman v5 configuration table)
+UPDATE partman.part_config SET retention = '30 days', retention_keep_table = false WHERE parent_table LIKE 'public.history%';
+UPDATE partman.part_config SET retention = '365 days', retention_keep_table = false WHERE parent_table LIKE 'public.trends%';
+
+-- 5. Grant Permissions on New Tables and Future Child Partitions (CRITICAL)
+GRANT ALL ON SCHEMA public TO zabbix;
+GRANT ALL ON SCHEMA partman TO zabbix;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO zabbix;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO zabbix;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO zabbix;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA partman TO zabbix;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO zabbix;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO zabbix;
+ALTER DEFAULT PRIVILEGES IN SCHEMA partman GRANT ALL ON TABLES TO zabbix;
+
+\q</code></pre>
+
+            <h3 class="tutorial-subtitle-2">Step 7: Configure Maintenance Cron Job</h3>
+            <p>Schedule the daily partition maintenance task so pg_partman automatically creates future tables and drops expired partitions without requiring manual intervention.</p>
+            <p>Open root crontab:</p>
+            <pre><code>crontab -e</code></pre>
+            <p>Add the following entry (runs daily at 01:00 AM):</p>
+            <pre><code>0 1 * * * sudo -u postgres psql -d zabbix -c "CALL partman.run_maintenance_proc();" > /dev/null 2>&1</code></pre>
+
+            <h3 class="tutorial-subtitle-2">Step 8: Configure Zabbix Server & Nginx</h3>
+            <p>Update Zabbix Server Database Password:</p>
+            <pre><code>nano /etc/zabbix/zabbix_server.conf</code></pre>
+            <p>Set your database password:</p>
+            <pre><code>DBPassword=Your_Strong_Password</code></pre>
+            <p>Configure Nginx for Zabbix:</p>
+            <pre><code>nano /etc/zabbix/nginx.conf</code></pre>
+            <p>Uncomment and adjust the listening directives:</p>
+            <pre><code>listen 80;
+server_name _;</code></pre>
+            <p>Enable Zabbix Configuration in Nginx:</p>
+            <pre><code>rm /etc/nginx/sites-enabled/default
+ln -s /etc/zabbix/nginx.conf /etc/nginx/conf.d/zabbix.conf
+nginx -t</code></pre>
+
+            <h3 class="tutorial-subtitle-2">Step 9: Service Management</h3>
+            <p>Start and enable all relevant services on system boot:</p>
+            <pre><code>systemctl restart zabbix-server zabbix-agent nginx php8.1-fpm postgresql
+systemctl enable zabbix-server zabbix-agent nginx php8.1-fpm postgresql</code></pre>
+
+            <h3 class="tutorial-subtitle-2">Step 10: Web Setup Wizard & Post-Installation Tasks</h3>
+            <p>Navigate to <code>http://SERVER_IP</code> in your web browser.</p>
+            <p>Complete the setup wizard:</p>
+            <ul>
+                <li>Select <strong>PostgreSQL</strong> as the Database Type.</li>
+                <li>Enter Database Host (<code>localhost</code>), Database Name (<code>zabbix</code>), User (<code>zabbix</code>), and Password (<code>Your_Strong_Password</code>).</li>
+                <li>Set Default Timezone to <code>Asia/Tehran</code>.</li>
+            </ul>
+            <p>Log in with default credentials:</p>
+            <ul>
+                <li><strong>Username:</strong> Admin</li>
+                <li><strong>Password:</strong> zabbix</li>
+            </ul>
+
+            <div class="custom-alert-danger">
+                <h4 style="color: #ef4444; margin-top: 0;">CRITICAL: Disable Zabbix Internal Housekeeper</h4>
+                <p>Since database retention is fully offloaded to pg_partman, disable internal housekeeping to avoid high CPU/IO database locks:</p>
+                <ol style="margin-bottom: 0;">
+                    <li>Navigate to <strong>Administration ➔ General ➔ Housekeeping</strong>.</li>
+                    <li>Uncheck <strong>Enable internal housekeeping</strong> for both History and Trends.</li>
+                    <li>Click <strong>Update</strong>.</li>
+                </ol>
+            </div>
+        </section>
+    </article>
+</div>
+{% endblock %}
